@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Регистрация</title>{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2> Регистрация </h2>
+</div>
+{% if error %}
+<div class="alert alert-danger" role="alert">
+{{error}}
+</div>
+{% endif %}
+{% if not current_user.is_authenticated %}
+<form action="" method="post" novalidate>
+	<div class="form-group row justify-content-center">
+		<label for="inputname" class="col-sm-2 col-form-label">Как вас называть</label>
+		<div class="col-sm-3">
+			<input class="form-control" id="inputname" name="username" value='{{username}}'/>
+		</div>
+	</div>
+	<div class="form-group row justify-content-center">
+		<label for="inputlogin" class="col-sm-2 col-form-label">Логин</label>
+		<div class="col-sm-3">
+			<input class="form-control" id="inputlogin"  value='{{login}}' name="login"/>
+		</div>
+	</div>
+	<div class="form-group row justify-content-center">
+		<label for="inputPassword1" class="col-sm-2 col-form-label" >Пароль</label>
+		<div class="col-sm-3">
+			<input type="password" class="form-control" id="inputPassword1" name="password1" value='{{password1}}'/>
+		</div>
+	</div>
+	<div class="form-group row justify-content-center">
+		<label for="inputPassword2" class="col-sm-2 col-form-label">Пароль еще раз</label>
+		<div class="col-sm-3">
+			<input type="password" class="form-control" id="inputPassword2" name="password2" value='{{password2}}'/>
+		</div>
+	</div>
+	<div class="form-group row justify-content-center">
+		<button type="submit" class="btn btn-primary">Зарегестрироваться</button>
+	<div class="form-group row justify-content-center">
+	</div>
+</form>
+
+{% endif %}
+
+{% if current_user.is_authenticated %}
+	<div class="d-flex justify-content-center my-5 text-center">
+		<h3> Вы уже зарегестрированы и вошли в систему</h3>
+	</div>
+{% endif %}
+{% endblock %}

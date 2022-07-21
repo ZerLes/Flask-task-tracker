@@ -1,0 +1,18 @@
+<ul class="nav nav-pills">
+  <li class="nav-item {{active}}">
+    <a id= "nav_demands" class="nav-link" href="/client/{{ client_id }}/demand">Заявки</a>
+  </li>
+  <li class="nav-item">
+    <a id= "nav_document" class="nav-link" href="/client/{{ client_id }}/document">Документация</a>
+  </li>
+  <li class="nav-item">
+    <a id= "nav_equipment" class="nav-link" href="/client/{{ client_id }}/equipment">Оборудование</a>
+  </li>
+  <li class="nav-item">
+    <a id= "nav_people" class="nav-link" href="/client/{{ client_id }}/people">Контакты</a>
+  </li>
+  <li class="nav-item">
+    <a id= "nav_addresses" class="nav-link" href="/client/{{ client_id }}/addresses">Адреса</a>
+  </li>
+</ul>
+<script>document.getElementById("{{active}}").classList.add("active")</script>

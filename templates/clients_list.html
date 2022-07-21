@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Новая задача</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2> Клиенты </h2>
+</div>
+
+<div class="container">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Договор</th>
+            <th>Краткое название</th>
+            <th>Полное наименование организации</th>
+            <th>Дата заключения договора</th>
+        </tr>
+    </thead>
+    <tbody>
+	{% for client in clients %}
+        <tr  style="cursor: pointer" onclick="window.location='{{client.client_id}}';">
+            <td>{{client.dogovor}}</td>
+            <td>{{client.short_name}}</td>
+            <td>{{client.name}}</td>
+            <td>{{client.date}}</td>
+        </tr>
+	{% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

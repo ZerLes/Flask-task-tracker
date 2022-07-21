@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - Мои заявки</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+<script>
+$(function(){
+    $('.table tr[data-href]').each(function(){
+        $(this).css('cursor','pointer').hover(
+            function(){ 
+                $(this).addClass('active'); 
+            },  
+            function(){ 
+                $(this).removeClass('active'); 
+            }).click( function(){ 
+                document.location = $(this).attr('data-href'); 
+            }
+        );
+    });
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>Мои заявки</h2>
+</div>
+
+<div class="container text-center my-2">
+	<div class="form-group form-check">
+		<input type="checkbox" class="form-check-input" id="show_closed" onclick='$(".closed").toggle("hidden")'>
+		<label class="form-check-label" for="show_closed">Показать закрытые</label>
+	</div>
+</div>
+
+
+<div class="container">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th style="cursor: pointer;">{{ form.demand_id.label.text }}</th>
+            <th style="cursor: pointer;">Клиент</th>
+            <th style="cursor: pointer">{{ form.demand_name.label.text }}</th>
+            <th style="cursor: pointer">{{ form.demand_date_deadline.label.text }}</th>
+            <th style="cursor: pointer">{{ form.demand_date_last.label.text }}</th>
+            <th style="cursor: pointer">{{ form.demand_performer_id.label.text }}</th>
+            <th style="cursor: pointer">{{ form.status.label.text }}</th>
+        </tr>
+    </thead>
+	<tbody>
+
+ 	{% for demand in demands %}
+	
+		<tr data-href="/client/{{demand.client.client_id}}/demand/{{demand.demand_id}}" style='cursor: pointer; {{ "display: none;" if demand.status == 0}}' 
+		class='{{ "table-danger" if demand.isExpired() and not demand.status in [0, 2] else " "}} 
+		{{ "table-success" if demand.status == 2 else ""}}
+		{{ "closed table-secondary" if demand.status == 0}}'>
+            <td>{{ demand.demand_id|default("", True) }}</td>
+            <td>{{ demand.client.short_name|default("", True) }}</td>
+            <td>{{ demand.demand_name|default("", True) }}</td>
+            <td>{{ demand.demand_date_deadline.date()|default("", True) }}</td>
+            <td>{{ demand.demand_date_last.strftime("%Y-%m-%d %H:%M:%S")|default("", True) }}</td>
+            <td>{{ demand.user_to.username|default("", True) }}</td>
+            <td>{{ {1 : 'В работе', 0 : 'Закрыта', 2 : 'Отслеживается', 3 : 'Просрочена'}[3 if demand.isExpired() and demand.status == 1 else demand.status] }}</td>
+        </tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+
+
+</body>
+
+
+{% endblock %}

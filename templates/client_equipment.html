@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - {{client.short_name}} - Оборудование</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+<script>
+function edit(id) {
+	edit_elems = document.getElementById("row_edit_" + id).getElementsByTagName("input")
+	def_elems = document.getElementById("row_default_" + id).getElementsByTagName("td");
+	for (i=0; i < (def_elems.length - 1); i++) {
+		edit_elems[i].value = def_elems[i + 1].innerText
+	}
+	document.getElementById("row_default_" + id).hidden = true;
+	document.getElementById("row_edit_" + id).hidden = false;
+	}
+function cancel(id) {
+	document.getElementById("row_default_" + id).hidden = false
+	document.getElementById("row_edit_" + id).hidden = true
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>{{client.dogovor}} {{client.name}} </h2>
+</div>
+
+<div class="d-flex justify-content-center my-4 text-center">
+	{% with client_id=client.client_id, active="nav_equipment" %}
+		{% include 'client_nav.html' %}
+	{% endwith %}
+</div>
+
+
+
+
+
+
+
+<div class="container text-center my-2">
+	<td><button id="btn_new" class="btn btn-outline-success" data-toggle="collapse" href="#row_new">Добавить оборудование</button></td>
+</div>
+
+
+<div class="container">
+<table class="table table-hover">
+    <thead>
+        <tr>
+
+            <th style="cursor: pointer">Тип оборудования</th>
+            <th style="cursor: pointer">Модель</th>
+            <th style="cursor: pointer">Характеристики</th>
+            <th style="cursor: pointer">Имя в сети</th>
+            <th style="cursor: pointer">Ответственное лицо</th>
+            <th style="cursor: pointer">Адрес</th>
+            <th></th>
+        </tr>
+    </thead>
+	<tbody>
+		<tr id="row_new", class="collapse">
+			<form method="post">
+            <td>{{ form.equipment_type_id(class="form-control", style="font-size:12px")}}</td>
+            <td>{{ form.equipment_model(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_specs(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_hostname(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_owner(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_id(class="form-control", style="font-size:12px") }}</td>
+			{{ form.csrf_token }}
+
+
+			<td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	</tbody>
+	<tbody>
+	{% for device in client.equipments.all() %}
+		<tr id="row_default_{{ device.equipment_id }}" style="font-size:12px">
+            <td>{{ form.equipment_type_id.choices[device.equipment_type_id - 1][1]}}</td>
+            <td>{{ device.equipment_model|default("", True) }}</td>
+            <td>{{ device.equipment_specs|default("", True) }}</td>
+            <td>{{ device.equipment_hostname|default("", True) }}</td>
+            <td>{{ device.equipment_owner|default("", True) }}</td>
+            <td>{{ client.addresses.filter_by(id = device.equipment_id).first().name }}</td>
+            <td class="text-center">
+				<button type="button" class="btn" onclick="edit({{device.equipment_id}})" data-toggle="tooltip" data-placement="bottom" title="Редактировать">
+					<img src="{{ url_for('static', filename='svg/pencil.svg') }}" alt="edit" />
+				</button>
+				<a href="./delete_{{ device.equipment_id}}" class="btn" data-toggle="tooltip" data-placement="bottom" title="Удалить">
+					<img src="{{ url_for('static', filename='svg/trash.svg') }}" alt="edit" />
+				</a>
+			</td>
+		</tr>
+		<tr id="row_edit_{{ device.equipment_id }}", hidden>
+			<form method="post">
+            <td>{{ form.equipment_type_id(class="form-control", style="font-size:12px")}}</td>
+            <td>{{ form.equipment_model(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_specs(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_hostname(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_owner(class="form-control", style="font-size:12px")|default("", True) }}</td>
+            <td>{{ form.equipment_id(class="form-control", style="font-size:12px") }}</td>
+			{{ form.csrf_token }}
+			{{ form.equipment_edit_id(value = device.equipment_id)}}
+            <td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+				<button type="button" class="btn btn-outline-danger" onclick="cancel({{device.equipment_id}})" data-toggle="tooltip" data-placement="bottom" title="Отмена" >
+					<img src="{{ url_for('static', filename='svg/x-circle.svg') }}" alt="cancel" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	{% endfor %}
+
+
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+{% endblock %}

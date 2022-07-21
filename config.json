@@ -1,0 +1,6 @@
+{
+	"SECRET_KEY" : "kcf0e---@+)%+61mj7%f8^itt4_ms$dfd&a@6o4d#9!ef$p1=$",
+	"SQLALCHEMY_DATABASE_URI" : "mssql+pyodbc://DESKTOP-TBVLULV\\SQLEXPRESS/test_app?driver=SQL+Server?trusted_connection=yes?UID=sa?PWD=sa",
+	"SQLALCHEMY_TRACK_MODIFICATIONS" : false,
+	"DEBUG" : false
+}

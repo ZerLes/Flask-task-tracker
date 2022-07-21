@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - {{client.short_name}} - Документация</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<script src={{ url_for('static', filename='js/tinymce/tinymce.min.js') }}></script>
+<script>
+
+tinymce.init({
+	selector: 'textarea#mce_edit',
+	language: 'ru',
+	plugins: ['autolink', 'table', 'save', 'help', 'autoresize', 'link', 'textcolor', 'anchor', 'lists'],
+	menubar: 'edit insert format table tools help',
+	statusbar: false,
+	mobile: {
+		theme: 'mobile'
+	},
+	min_height: 500,
+	object_resizing : true,
+	init_instance_callback : function(editor) {
+		editor.getContainer().getElementsByClassName("tox-editor-header")[0].hidden = true
+		editor.setMode('readonly')
+		}
+	});
+function edit_text() {
+	if (tinymce.activeEditor.readonly) {
+		tinymce.activeEditor.setMode('design');
+		tinymce.activeEditor.getContainer().getElementsByClassName("tox-editor-header")[0].hidden = false;
+		document.getElementById("edit_button").hidden = true
+		document.getElementById("save_button").hidden = false
+		}
+	}
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>{{client.dogovor}} {{client.name}} </h2>
+</div>
+
+<div class="d-flex justify-content-center my-4 text-center">
+	{% with client_id=client.client_id, active="nav_document" %}
+		{% include 'client_nav.html' %}
+	{% endwith %}
+</div>
+
+
+
+<div class="container">
+	<form method="post">
+		<div>
+			<textarea id="mce_edit" name="client_document">{{ client.client_document }}</textarea>
+		</div>
+		<div class="container text-center mt-2" id="save_button" hidden=true>
+			<button type="submit" class="btn btn-outline-success">Сохранить</button>
+		</div>
+	</form>
+		<div class="container text-center" id="edit_button">
+		<button class="btn btn-outline-success my-2 text-center" onclick="edit_text()">Редактировать</button>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - {{client.short_name}} - Адреса</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+
+
+<script>
+function edit(id) {
+	edit_elems = document.getElementById("row_edit_" + id).getElementsByTagName("input")
+	def_elems = document.getElementById("row_default_" + id).getElementsByTagName("td");
+	for (i=0; i < (def_elems.length - 1); i++) {
+		edit_elems[i].value = def_elems[i].innerText
+	}
+	document.getElementById("row_default_" + id).hidden = true;
+	document.getElementById("row_edit_" + id).hidden = false;
+	}
+function cancel(id) {
+	document.getElementById("row_default_" + id).hidden = false
+	document.getElementById("row_edit_" + id).hidden = true
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>{{client.dogovor}} {{client.name}} </h2>
+</div>
+
+<div class="d-flex justify-content-center my-4 text-center">
+	{% with client_id=client.client_id, active="nav_addresses" %}
+		{% include 'client_nav.html' %}
+	{% endwith %}
+</div>
+
+<div class="container text-center my-2">
+	<td><button id="btn_new" class="btn btn-outline-success" data-toggle="collapse" data-target="#row_new">Добавить адрес</button></td>
+	<td><button id="btn_new" class="btn btn-outline-success" data-toggle="collapse" data-target="#row_new">Добавить адрес</button></td>
+</div>
+
+<div class="container">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th style="cursor: pointer">Адреса</th>
+            <th></th>
+        </tr>
+    </thead>
+	
+	
+    <tbody>
+		<tr id="row_new", class="collapse">
+			<form method="post">
+			{{ form.csrf_token }}
+            <td>
+				{{ form.name(class="form-control", placeholder="Новый адрес")}}
+			</td>
+            <td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	</tbody>
+	
+	
+	<tbody>
+	{% for address in client.addresses.all() %}
+		<tr id="row_default_{{ address.id }}">
+            <td>
+				{{ address.name|default("", True) }}
+			</td>
+            <td class="text-center">
+				<button type="button" class="btn" onclick="edit({{address.id}})" data-toggle="tooltip" data-placement="bottom" title="Редактировать">
+					<img src="{{ url_for('static', filename='svg/pencil.svg') }}" alt="edit" />
+				</button>
+				<a href="./delete_{{ address.id}}" class="btn" data-toggle="tooltip" data-placement="bottom" title="Удалить">
+					<img src="{{ url_for('static', filename='svg/trash.svg') }}" alt="edit" />
+				</a>
+			</td>
+		</tr>
+		<tr id="row_edit_{{ address.id }}", hidden>
+			<form method="post">
+            <td>
+				{{ form.name(class="form-control")}}
+				{{ form.address_edit_id(value = address.id)}}
+				{{ form.csrf_token }}
+			</td>
+            <td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+				<button type="button" class="btn btn-outline-danger" onclick="cancel({{address.id}})" data-toggle="tooltip" data-placement="bottom" title="Отмена" >
+					<img src="{{ url_for('static', filename='svg/x-circle.svg') }}" alt="cancel" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	{% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

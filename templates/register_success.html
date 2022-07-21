@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Регистрация</title>{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="alert alert-danger" role="alert">
+  {{error}}
+</div>
+{% endif %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2> Регистрация выполнена успешно </h2>
+</div>
+<div class="d-flex justify-content-center  text-center">
+	<label for="inputPassword" class="h3 col-sm-1">Пожалуйста </label>
+	<div class="col-sm-3">
+		<a class="btn btn-primary btn-lg btn-success" href="/login" role="button" >Авторизуйтесь</a>
+	</div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - {{client.short_name}} - Контакты</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+<script>
+function add_stamp() {
+	var now = new Date();
+	var now = now.getFullYear() + "-"+ (now.getMonth()+1) + "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+	document.getElementById("demand_data").value += "\n" + now + " {{current_user.username}}: \n";
+	}
+function add_first_stamp() {
+	var now = new Date();
+	var now = now.getFullYear() + "-"+ (now.getMonth()+1) + "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+	document.getElementById("demand_data").value += now + " {{current_user.username}}: \n";
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>{{client.dogovor}} {{client.name}} </h2>
+</div>
+
+<div class="d-flex justify-content-center my-4 text-center">
+	{% with client_id=client.client_id, active="nav_demands" %}
+		{% include 'client_nav.html' %}
+	{% endwith %}
+</div>
+
+<div class="container" >
+	<form method="post">
+		<div class="form-group row">
+			{{ form.demand_name.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.demand_name(style="font-size:14px", class="form-control", value=demand.demand_name, disabled = form.isReadOnly(demand.status)) }}
+			</div>
+		</div>
+		<div class="form-group row">
+			{{ form.status.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.status(style="font-size:14px", class="form-control")}}
+				<script>document.getElementById("status").value = {{ demand.status }}</script>
+			</div>
+		</div>
+		<div class="form-group row">
+			{{ form.demand_date_deadline.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.demand_date_deadline(style="font-size:14px", class="form-control", type="date", value = demand.demand_date_deadline.date(), disabled = form.isReadOnly(demand.status))}}
+			</div>
+		</div>
+		<div class="form-group row">
+			{{ form.demand_creator_id.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.demand_creator_id(style="font-size:14px", class="form-control", disabled = true)}}
+				<script>document.getElementById("demand_creator_id").value = {{ demand.user_from.id }}</script>
+			</div>
+		</div>
+		<div class="form-group row disabled">
+			{{ form.demand_performer_id.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.demand_performer_id(style="font-size:14px", class="form-control", disabled = form.isReadOnly(demand.status))}}
+				<script>document.getElementById("demand_performer_id").value = {{ demand.user_to.id }}</script>
+			</div>
+		</div>
+		<div class="form-group row">
+			{{ form.demand_equipment_id.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+
+				{{ form.demand_equipment_id(style="font-size:14px", class="form-control", disabled = form.isReadOnly(demand.status))}}
+				<script>document.getElementById("demand_equipment_id").value = {{ demand.equipment.equipment_id|default("", True) }}</script>
+			</div>
+		</div>
+		{% if not demand.status == 0 %}
+		<div class="form-group row">
+			<div class="col-md-2"></div>
+			<div class="col-7 text-center">
+				<a class="stretched-link" onclick="add_stamp()">-> Вставить текущее время и ФИО сотрудника <-</a>
+			</div>
+		</div>
+		{% endif %}
+		<div class="form-group row">
+			{{ form.demand_data.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{% set null = form.demand_data.process_data(demand.demand_data) %}
+				{{ form.demand_data(style="font-size:14px; height: 250px", class="form-control", disabled = form.isReadOnly(demand.status))}}
+			</div>
+		</div>
+		<div class="form-group row">
+			{{ form.demand_contact.label(class="col-form-label col-md-2")}}
+			<div class="col-7">
+				{{ form.demand_contact(style="font-size:14px", class="form-control", value=demand.demand_contact|default("", True), disabled = form.isReadOnly(demand.status))}}
+				{{ form.csrf_token }}
+			</div>
+		</div>
+		<div class="form-group row justify-content-center">
+			<button type="submit" class="btn btn-outline-success">Сохранить</button>
+		</div>
+	</form>
+</div>
+
+
+
+
+{% endblock %}

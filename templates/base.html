@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+			<script src="{{ url_for('static', filename='js/jquery-3.5.1.slim.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+				<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+			</meta>
+			<link href="{{ url_for('static', filename='svg/favicon.svg') }}" rel="icon" type="image/svg+xml" />
+			
+			<script>
+				$(function () {
+					$('[data-toggle="tooltip"]').tooltip()
+					})
+			</script>
+
+		{% block title %}{% endblock %}
+		{% block scripts %}{% endblock %}
+				</head>
+				<body>
+
+		{% include 'navbar.html' %}
+		{% block content %}{% endblock %}
+				</body>
+			</html>

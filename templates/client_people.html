@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}<title>HelpDesk - {{client.short_name}} - Контакты</title>{% endblock %}
+
+{% block scripts %}
+<script src={{ url_for('static', filename='js/tablesort.js') }}></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table_sorted.css') }}">
+<script>
+function edit(id) {
+	edit_elems = document.getElementById("row_edit_" + id).getElementsByTagName("input")
+	def_elems = document.getElementById("row_default_" + id).getElementsByTagName("td");
+	for (i=0; i < (def_elems.length - 1); i++) {
+		edit_elems[i].value = def_elems[i].innerText
+	}
+	document.getElementById("row_default_" + id).hidden = true;
+	document.getElementById("row_edit_" + id).hidden = false;
+	}
+function cancel(id) {
+	document.getElementById("row_default_" + id).hidden = false
+	document.getElementById("row_edit_" + id).hidden = true
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center my-5 text-center">
+	<h2>{{client.dogovor}} {{client.name}} </h2>
+</div>
+
+<div class="d-flex justify-content-center my-4 text-center">
+	{% with client_id=client.client_id, active="nav_people" %}
+		{% include 'client_nav.html' %}
+	{% endwith %}
+</div>
+
+
+<div class="container text-center my-2">
+	<td><button id="btn_new" class="btn btn-outline-success" data-toggle="collapse" href="#row_new">Добавить контакт</button></td>
+</div>
+
+
+<div class="container">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th style="cursor: pointer">ФИО</th>
+            <th style="cursor: pointer">Должность</th>
+            <th style="cursor: pointer">Контакт</th>
+            <th style="cursor: pointer">Комментарий</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+		<tr id="row_new", class="collapse">
+			<form method="post">
+			{{ form.csrf_token }}
+            <td>{{ form.people_fio(class="form-control", placeholder=form.people_fio.label.text)}}</td>
+            <td>{{ form.people_job(class="form-control", placeholder=form.people_job.label.text)}}</td>
+            <td>{{ form.people_contact(class="form-control", placeholder=form.people_contact.label.text)}}</td>
+            <td>{{ form.people_comment(class="form-control", placeholder=form.people_comment.label.text)}}</td>
+			<td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	</tbody>
+	
+	<tbody>
+	{% for man in client.people.all() %}
+		<tr id="row_default_{{ man.people_id }}">
+            <td>{{ man.people_fio|default("", True) }}</td>
+            <td>{{ man.people_job|default("", True) }}</td>
+            <td>{{ man.people_contact|default("", True) }}</td>
+            <td>{{ man.people_comment|default("", True) }}</td>
+            <td class="text-center">
+				<button type="button" class="btn" onclick="edit({{man.people_id}})" data-toggle="tooltip" data-placement="bottom" title="Редактировать">
+					<img src="{{ url_for('static', filename='svg/pencil.svg') }}" alt="edit" />
+				</button>
+				<a href="./delete_{{ man.people_id}}" class="btn" data-toggle="tooltip" data-placement="bottom" title="Удалить">
+					<img src="{{ url_for('static', filename='svg/trash.svg') }}" alt="edit" />
+				</a>
+			</td>
+		</tr>
+		<tr id="row_edit_{{ man.people_id }}", hidden>
+			<form method="post">
+            <td>{{ form.people_fio(class="form-control")}}</td>
+            <td>{{ form.people_job(class="form-control")}}</td>
+            <td>{{ form.people_contact(class="form-control")}}</td>
+            <td>{{ form.people_comment(class="form-control")}}</td>
+			{{ form.csrf_token }}
+			{{ form.people_edit_id(value = man.people_id)}}
+            <td class="text-center">
+				<button type="submit" class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Сохранить">
+					<img src="{{ url_for('static', filename='svg/save.svg') }}" alt="save" />
+				</button>
+				<button type="button" class="btn btn-outline-danger" onclick="cancel({{man.people_id}})" data-toggle="tooltip" data-placement="bottom" title="Отмена" >
+					<img src="{{ url_for('static', filename='svg/x-circle.svg') }}" alt="cancel" />
+				</button>
+			</td>
+			</form>
+		</tr>
+	{% endfor %}
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+{% endblock %}

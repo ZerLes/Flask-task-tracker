@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Вход</title>{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-center my-5 text-center">
+		<h2> Авторизация </h2>
+	</div>
+	{% if not current_user.is_authenticated %}
+	{% if error %}
+		<div class="alert alert-danger" role="alert">
+		{{error}}
+		</div>
+	{% endif %}
+	<form action="" method="post" novalidate>
+		<div class="form-group row justify-content-center">
+			<label for="inputlogin" class="col-sm-1 col-form-label">Логин</label>
+			<div class="col-sm-3">
+				<input class="form-control" id="inputlogin" name="login"/>
+			</div>
+		</div>
+		<div class="form-group row justify-content-center">
+			<label for="inputPassword" class="col-sm-1 col-form-label">Пароль</label>
+			<div class="col-sm-3">
+				<input type="password" class="form-control" id="inputPassword" name="password"/>
+			</div>
+		</div>
+		<div class="form-group row justify-content-center">
+			<button type="submit" class="btn btn-primary">Войти</button>
+		</div>
+	</form>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+				<div class="d-flex justify-content-center my-5 text-center">
+					<h3> Вы уже авторизованы</h3>
+				</div>
+{% endif %}
+{% endblock %}
